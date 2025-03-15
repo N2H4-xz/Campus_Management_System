@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class Classes {
     @TableId(type = IdType.AUTO)
     private Integer id;
-    
+
     private String name;
     private String category;
     private Byte point;
