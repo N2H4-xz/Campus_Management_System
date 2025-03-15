@@ -13,7 +13,6 @@ public class CourseReg {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
-
     private Integer studentId;
     private Integer courseId;
     private String classNum;
