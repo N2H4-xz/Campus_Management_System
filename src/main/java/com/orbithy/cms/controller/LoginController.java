@@ -1,7 +1,7 @@
 package com.orbithy.cms.controller;
 
 import com.orbithy.cms.data.vo.Result;
-import com.orbithy.cms.service.SDUlogin;
+import com.orbithy.cms.service.SDULogin;
 import com.orbithy.cms.utils.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,10 +16,10 @@ import java.util.Map;
 @RequestMapping("/login")
 public class LoginController {
     @Autowired
-    private SDUlogin sduLogin;
+    private SDULogin sduLogin;
 
-    @RequestMapping(value = "/SDUlogin", method = {RequestMethod.POST})
-    public ResponseEntity<Result> SDUlogin(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map) {
+    @RequestMapping(value = "/SDULogin", method = {RequestMethod.POST})
+    public ResponseEntity<Result> SDULogin(HttpServletRequest request, HttpServletResponse response, @RequestBody Map map) {
         String stuId = null;
         String password = null;
         try {
