@@ -14,10 +14,7 @@ public class Section {
     @TableId(type = IdType.AUTO)
     private Integer id; // 班级唯一ID
 
-    @TableField(value = "major")
     private Major major; // 专业
-
-    @TableField(value = "advisor_id")
     private Integer advisorId; // 导员ID（外键）
 
     // 专业枚举类型
