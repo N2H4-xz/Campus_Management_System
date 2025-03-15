@@ -23,7 +23,7 @@ COLLATE utf8mb4_bin;
 | **phone**    | `VARCHAR(11) UNIQUE`           | 可为空，唯一                               | 手机号            |
 | **password** | `CHAR(128) NOT NULL`           | 非空                                      | 加密后的密码      |
 | **student_id** | `CHAR(20) NOT NULL UNIQUE`    | 非空，唯一                                 | 学号              |
-| **major**    | `ENUM('0', '1', '2', '3')` | 非空                                      | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
+| **major**    | `ENUM('0', '1', '2', '3')` | 非空，默认为0                                   | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
 | **permission** | `TINYINT DEFAULT 2`          | 默认 2                                    | 权限 (`0` 教务 / `1` 教师 / `2` 学生) |
 | **nation**   | `VARCHAR(100) DEFAULT 'China' NOT NULL` | 默认 `China`，非空                     | 国籍              |
 | **ethnic**   | `VARCHAR(50) DEFAULT '汉族' NOT NULL` | 默认 `汉族`，非空                        | 民族              |
@@ -44,7 +44,7 @@ CREATE TABLE user (
     phone VARCHAR(11) UNIQUE COMMENT '手机号',
     password CHAR(128) NOT NULL COMMENT '加密后的密码',
     student_id CHAR(20) NOT NULL UNIQUE COMMENT '学号',
-    major ENUM('0','1','2','3') COMMENT '专业0软工/1树莓/2大数据/3AI',
+    major ENUM('0','1','2','3') DEFAULT '0' COMMENT '专业0软工/1树莓/2大数据/3AI',
     permission TINYINT DEFAULT 2 COMMENT '教务牢师0/教师1/学生2',
     nation VARCHAR(100) DEFAULT 'China' NOT NULL COMMENT '国籍',
     ethnic VARCHAR(50) DEFAULT '汉族' NOT NULL COMMENT '民族',
@@ -211,7 +211,7 @@ CREATE TABLE grade(
 |--------------|------------------------------|--------------------------------------------|-------------------|
 | **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 班级唯一 ID       |
 | **major**    | `ENUM('0', '1', '2', '3') NOT NULL` | 非空                                | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
-| **advisor_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 班主任 ID         |
+| **advisor_id** | `INT NOT NULL`                | 外键，关联 `user` 表                 | 班主任 ID         |
 
 ---
 
@@ -221,7 +221,7 @@ CREATE TABLE grade(
 CREATE TABLE section (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '班级唯一ID',
     major ENUM('0', '1', '2', '3') NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
-    advisor_id INT NOT NULL COMMENT '导员ID',
+    advisor_id INT COMMENT '导员ID',
     FOREIGN KEY (advisor_id) REFERENCES user(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
 ```
