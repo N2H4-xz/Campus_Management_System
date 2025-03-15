@@ -23,7 +23,6 @@ COLLATE utf8mb4_bin;
 | **password** | `CHAR(128) NOT NULL`           | 非空                                      | 加密后的密码      |
 | **student_id** | `CHAR(20) NOT NULL UNIQUE`    | 非空，唯一                                 | 学号              |
 | **major**    | `ENUM('0', '1', '2', '3') NOT NULL` | 非空                                      | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
-| **section** | `INT` | 非空 | 所在班级 |
 | **permission** | `TINYINT DEFAULT 2`          | 默认 2                                    | 权限 (`0` 教务 / `1` 教师 / `2` 学生) |
 | **nation**   | `VARCHAR(100) DEFAULT 'China' NOT NULL` | 默认 `China`，非空                     | 国籍              |
 | **ethnic**   | `VARCHAR(50) DEFAULT '汉族' NOT NULL` | 默认 `汉族`，非空                        | 民族              |
@@ -44,14 +43,12 @@ CREATE TABLE user (
     password CHAR(128) NOT NULL COMMENT '加密后的密码',
     student_id CHAR(20) NOT NULL UNIQUE COMMENT '学号',
     major ENUM('0','1','2','3') NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
-    section INT NOT NULL COMMENT '所在班级',
     permission TINYINT DEFAULT 2 COMMENT '教务牢师0/教师1/学生2',
     nation VARCHAR(100) DEFAULT 'China' NOT NULL COMMENT '国籍',
     ethnic VARCHAR(50) DEFAULT '汉族' NOT NULL COMMENT '民族',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
-    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间',
-    FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
+    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 ```
 
