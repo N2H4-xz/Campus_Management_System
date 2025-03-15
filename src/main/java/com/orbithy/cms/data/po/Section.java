@@ -1,4 +1,4 @@
-package com.orbithy.cms.data.vo;
+package com.orbithy.cms.data.po;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;

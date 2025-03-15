@@ -1,4 +1,4 @@
-package com.orbithy.cms.data.vo;
+package com.orbithy.cms.data.po;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Getter;
@@ -19,6 +19,7 @@ public class Status {
     @TableField(value = "section")
     private Byte section;
 
+    @EnumValue
     @TableField(value = "status")
-    private Integer status;
+    private StudentStatus status;
 }
