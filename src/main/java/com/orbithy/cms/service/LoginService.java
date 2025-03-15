@@ -6,18 +6,16 @@ import com.orbithy.cms.utils.BcryptUtils;
 import com.orbithy.cms.utils.JWTUtil;
 import com.orbithy.cms.utils.ResponseUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.orbithy.cms.utils.JWTUtil.REFRESH_SECRET_KEY;
 
 @Service
-public class login {
+public class LoginService {
 
     @Autowired
     private JWTUtil jwtUtil;
@@ -53,5 +51,16 @@ public class login {
         return count != null && count > 0;
     }
 
+    public ResponseEntity<Result> login(String stuId, String password) {
+        if (!isExisted(stuId)) {
+            return ResponseUtil.build(Result.error(401, "用户不存在"));
+        }
+        String passwd = userMapper.getPassword(stuId);
+        if (!BcryptUtils.verifyPasswd(password, passwd)) {
+            return ResponseUtil.build(Result.error(401, "密码错误"));
+        }
+        String userId = String.valueOf(userMapper.getUserId(stuId));
+        return getToken(userId);
+    }
 
 }
