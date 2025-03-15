@@ -14,4 +14,6 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Insert("insert into user (username, password, student_id, major) values (#{username}, #{password}, #{SDUId}, 0)")
     void addUser(String username, String password, String SDUId);
+    @Insert("insert into user (username, password, student_id, major) values (#{username}, #{password}, #{SDUId}, #{permission})")
+    void addTeacher(String username, String password, String SDUId, int permission);
 }

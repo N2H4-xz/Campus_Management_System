@@ -3,20 +3,31 @@ package com.orbithy.cms.cache.impl;
 import com.orbithy.cms.cache.IGlobalCache;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+@Primary
 @Getter
 @AllArgsConstructor
+@Component
 public class AppRedisCacheManager implements IGlobalCache {
 
     private RedisTemplate<String, Object> redisTemplate;
 
     private final HashOperations<String, String, String > hashOperations;
+
+    @Autowired
+    public AppRedisCacheManager(RedisTemplate<String, Object> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+        this.hashOperations = redisTemplate.opsForHash();
+    }
 
     @Override
     public boolean expire(String key, long time) {
@@ -352,4 +363,8 @@ public class AppRedisCacheManager implements IGlobalCache {
         return redisTemplate.opsForZSet().removeRange(key, maxRank, -1);
     }
 
+    @Override
+    public RedisTemplate<String, Object> getRedisTemplate() {
+        return redisTemplate;
+    }
 }

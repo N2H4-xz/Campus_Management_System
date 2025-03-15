@@ -95,6 +95,6 @@ public class RedisConfig {
 
     @Bean
     IGlobalCache cache(RedisTemplate<String, Object> redisTemplate, HashOperations<String, String, String> hashOperations) {
-        return new AppRedisCacheManager(redisTemplate, hashOperations);
+        return new AppRedisCacheManager(redisTemplate);
     }
 }
