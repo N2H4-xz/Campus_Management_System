@@ -56,4 +56,4 @@ build/
 hs_err_pid*
 replay_pid*
 src/main/resources/application.yml
-src/main/java/com/orbithy/cms/service/SDUlogin.java
+src/main/java/com/orbithy/cms/service/SDULogin.java
