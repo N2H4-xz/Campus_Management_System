@@ -23,7 +23,6 @@ COLLATE utf8mb4_bin;
 | **password** | `CHAR(128) NOT NULL`           | 非空                                      | 加密后的密码      |
 | **student_id** | `CHAR(20) NOT NULL UNIQUE`    | 非空，唯一                                 | 学号              |
 | **major**    | `ENUM('0', '1', '2', '3') NOT NULL` | 非空                                      | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
-| **section** | `INT` | 非空 | 所在班级 |
 | **permission** | `TINYINT DEFAULT 2`          | 默认 2                                    | 权限 (`0` 教务 / `1` 教师 / `2` 学生) |
 | **nation**   | `VARCHAR(100) DEFAULT 'China' NOT NULL` | 默认 `China`，非空                     | 国籍              |
 | **ethnic**   | `VARCHAR(50) DEFAULT '汉族' NOT NULL` | 默认 `汉族`，非空                        | 民族              |
@@ -43,15 +42,13 @@ CREATE TABLE user (
     phone VARCHAR(11) UNIQUE COMMENT '手机号',
     password CHAR(128) NOT NULL COMMENT '加密后的密码',
     student_id CHAR(20) NOT NULL UNIQUE COMMENT '学号',
-    major ENUM(0,1,2,3) NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
-    section INT NOT NULL COMMENT '所在班级',
+    major ENUM('0','1','2','3') NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
     permission TINYINT DEFAULT 2 COMMENT '教务牢师0/教师1/学生2',
     nation VARCHAR(100) DEFAULT 'China' NOT NULL COMMENT '国籍',
     ethnic VARCHAR(50) DEFAULT '汉族' NOT NULL COMMENT '民族',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
-    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间'，
-    FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
+    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 ```
 
@@ -67,7 +64,7 @@ CREATE TABLE user (
 |-----------|------------------------------|--------------------------|-----------------------------|
 | **id**    | `INT`                         | 外键，关联 `user` 表     | 对应用户 ID                 |
 | **grade** | `TINYINT NOT NULL`            | 非空                     | 年级                        |
-| **class** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空           | 班级                        |
+| **section** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空，关联班级表     | 班级                        |
 | **status** | `ENUM('0', '1', '2', '3') NOT NULL DEFAULT '0'` | 非空，默认 0              | 学籍状态 (`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学) |
 
 ---
@@ -78,13 +75,14 @@ CREATE TABLE user (
 CREATE TABLE status(
     id INT NOT NULL,
     grade TINYINT NOT NULL COMMENT '年级',
-    class TINYINT DEFAULT 0 NOT NULL COMMENT '班级',
-    status ENUM(0,1,2,3) NOT NULl DEFAULT 0 COMMENT '0在读/1休学/2降转/3退学',
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
-)
+    section INT DEFAULT 0 NOT NULL COMMENT '班级',
+    status ENUM('0','1','2','3') NOT NULl DEFAULT '0' COMMENT '0在读/1休学/2降转/3退学',
+    FOREIGN KEY (id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学籍表';
 ```
 
-## 课程表(class)
+## 课程表(classes)
 
 ### 表结构
 
@@ -113,10 +111,10 @@ CREATE TABLE status(
 ### 创建指令
 
 ```sql
-CREATE TABLE class(
+CREATE TABLE classes(
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '课程唯一ID',
     name VARCHAR(100) NOT NULL COMMENT '课程名称',
-    category VARCHAR(100) COMMENT '类别，如体育小项'.
+    category VARCHAR(100) COMMENT '类别，如体育小项',
     point TINYINT NOT NULL COMMENT '学分',
     teacher_id INT NOT NULL COMMENT '教师id',
     classroom VARCHAR(50) COMMENT '上课教室',
@@ -126,20 +124,20 @@ CREATE TABLE class(
     time SET('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24') COMMENT '上课时间段',
     college VARCHAR(50) COMMENT '开课学院',
     term VARCHAR(15) NOT NULL COMMENT '开课学期',
-    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
-    type ENUM("必修", "限选", "任选") NOT NULL COMMENT '课程类型',
+    class_num VARCHAR(50) UNIQUE NOT NULL COMMENT '课序号',
+    type ENUM('必修', '限选', '任选') NOT NULL COMMENT '课程类型',
     capacity TINYINT NOT NULL COMMENT '课容量',
     FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
     FOREIGN KEY (teacher_id) REFERENCES user(id) ON DELETE CASCADE
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
 ```
 
 ```sql
 CREATE TABLE class_num(
     id INT AUTO_INCREMENT PRIMARY KEY, 
-    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
-    name VARCHAR(100) NOT NULL COMMENT '课程名称',
-)
+    class_num VARCHAR(50) UNIQUE NOT NULL COMMENT '课序号',
+    name VARCHAR(100) NOT NULL COMMENT '课程名称'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课序号表';
 ```
 
 ## 选课结果表(course_reg)
@@ -152,7 +150,7 @@ CREATE TABLE class_num(
 |--------------|------------------------------|--------------------------------------------|--------------|
 | **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 选课唯一 ID   |
 | **student_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 学生 ID      |
-| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `class` 表                | 课程 ID      |
+| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `classes` 表                | 课程 ID      |
 | **class_num** | `VARCHAR(50) NOT NULL`        | 非空，外键，关联 `class_num` 表            | 课序号       |
 
 ---
@@ -167,8 +165,8 @@ CREATE TABLE course_reg(
     class_num VARCHAR(50) NOT NULL COMMENT '课序号',
     FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES class(id) ON DELETE CASCADE
-)
+    FOREIGN KEY (course_id) REFERENCES classes(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='选课结果表';
 ```
 
 ## 成绩表(grade)
@@ -181,7 +179,7 @@ CREATE TABLE course_reg(
 |--------------|------------------------------|--------------------------------------------|--------------|
 | **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 成绩唯一 ID   |
 | **student_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 学生 ID      |
-| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `class` 表                | 课程 ID      |
+| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `classes` 表                | 课程 ID      |
 | **grade**    | `TINYINT NOT NULL`             | 非空                                      | 成绩         |
 | **term**     | `VARCHAR(15) NOT NULL`         | 非空                                      | 开课学期     |
 | **rank**     | `TINYINT NOT NULL`             | 非空                                      | 排名         |
@@ -199,8 +197,8 @@ CREATE TABLE grade(
     term VARCHAR(15) NOT NULL COMMENT '开课学期',
     rank TINYINT NOT NULL COMMENT '排名',
     FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES class(id) ON DELETE CASCADE
-)
+    FOREIGN KEY (course_id) REFERENCES classes(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成绩表';
 ```
 
 ## 班级(section)
