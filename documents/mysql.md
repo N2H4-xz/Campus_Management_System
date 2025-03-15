@@ -75,11 +75,11 @@ CREATE TABLE user (
 CREATE TABLE status(
     id INT NOT NULL,
     grade TINYINT NOT NULL COMMENT '年级',
-    section TINYINT DEFAULT 0 NOT NULL COMMENT '班级',
-    status ENUM('0','1','2','3') NOT NULl DEFAULT 0 COMMENT '0在读/1休学/2降转/3退学',
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
+    section INT DEFAULT 0 NOT NULL COMMENT '班级',
+    status ENUM('0','1','2','3') NOT NULl DEFAULT '0' COMMENT '0在读/1休学/2降转/3退学',
+    FOREIGN KEY (id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学籍表';
 ```
 
 ## 课程表(classes)
@@ -114,7 +114,7 @@ CREATE TABLE status(
 CREATE TABLE classes(
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '课程唯一ID',
     name VARCHAR(100) NOT NULL COMMENT '课程名称',
-    category VARCHAR(100) COMMENT '类别，如体育小项'.
+    category VARCHAR(100) COMMENT '类别，如体育小项',
     point TINYINT NOT NULL COMMENT '学分',
     teacher_id INT NOT NULL COMMENT '教师id',
     classroom VARCHAR(50) COMMENT '上课教室',
@@ -124,20 +124,20 @@ CREATE TABLE classes(
     time SET('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24') COMMENT '上课时间段',
     college VARCHAR(50) COMMENT '开课学院',
     term VARCHAR(15) NOT NULL COMMENT '开课学期',
-    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
-    type ENUM("必修", "限选", "任选") NOT NULL COMMENT '课程类型',
+    class_num VARCHAR(50) UNIQUE NOT NULL COMMENT '课序号',
+    type ENUM('必修', '限选', '任选') NOT NULL COMMENT '课程类型',
     capacity TINYINT NOT NULL COMMENT '课容量',
     FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
     FOREIGN KEY (teacher_id) REFERENCES user(id) ON DELETE CASCADE
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
 ```
 
 ```sql
 CREATE TABLE class_num(
     id INT AUTO_INCREMENT PRIMARY KEY, 
-    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
-    name VARCHAR(100) NOT NULL COMMENT '课程名称',
-)
+    class_num VARCHAR(50) UNIQUE NOT NULL COMMENT '课序号',
+    name VARCHAR(100) NOT NULL COMMENT '课程名称'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课序号表';
 ```
 
 ## 选课结果表(course_reg)
@@ -166,7 +166,7 @@ CREATE TABLE course_reg(
     FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES classes(id) ON DELETE CASCADE
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='选课结果表';
 ```
 
 ## 成绩表(grade)
@@ -198,7 +198,7 @@ CREATE TABLE grade(
     rank TINYINT NOT NULL COMMENT '排名',
     FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES classes(id) ON DELETE CASCADE
-)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='成绩表';
 ```
 
 ## 班级(section)
