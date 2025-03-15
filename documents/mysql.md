@@ -1,0 +1,221 @@
+# 数据库设计文档
+
+## 创建数据库
+
+```sql
+CREATE DATABASE CMS
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_bin;
+```
+
+---
+
+## 用户表 (user)
+
+### 表结构
+
+| 字段名        | 数据类型                         | 约束                                        | 描述                |
+|--------------|--------------------------------|--------------------------------------------|-------------------|
+| **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 用户唯一 ID       |
+| **username** | `VARCHAR(50) NOT NULL UNIQUE`   | 非空，唯一                                 | 用户名            |
+| **email**    | `VARCHAR(100) UNIQUE`          | 可为空，唯一                               | 邮箱              |
+| **phone**    | `VARCHAR(11) UNIQUE`           | 可为空，唯一                               | 手机号            |
+| **password** | `CHAR(128) NOT NULL`           | 非空                                      | 加密后的密码      |
+| **student_id** | `CHAR(20) NOT NULL UNIQUE`    | 非空，唯一                                 | 学号              |
+| **major**    | `ENUM('0', '1', '2', '3') NOT NULL` | 非空                                      | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
+| **section** | `INT` | 非空 | 所在班级 |
+| **permission** | `TINYINT DEFAULT 2`          | 默认 2                                    | 权限 (`0` 教务 / `1` 教师 / `2` 学生) |
+| **nation**   | `VARCHAR(100) DEFAULT 'China' NOT NULL` | 默认 `China`，非空                     | 国籍              |
+| **ethnic**   | `VARCHAR(50) DEFAULT '汉族' NOT NULL` | 默认 `汉族`，非空                        | 民族              |
+| **created_at** | `TIMESTAMP DEFAULT CURRENT_TIMESTAMP` | 自动生成，默认当前时间                   | 注册时间          |
+| **updated_at** | `TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP` | 自动更新为当前时间 | 最后更新时间       |
+| **last_login_at** | `TIMESTAMP DEFAULT NULL`  | 可为空                                    | 最后登录时间      |
+
+---
+
+### 创建指令
+
+```sql
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '用户唯一ID',
+    username VARCHAR(50) NOT NULL UNIQUE COMMENT '用户名',
+    email VARCHAR(100) UNIQUE COMMENT '邮箱',
+    phone VARCHAR(11) UNIQUE COMMENT '手机号',
+    password CHAR(128) NOT NULL COMMENT '加密后的密码',
+    student_id CHAR(20) NOT NULL UNIQUE COMMENT '学号',
+    major ENUM(0,1,2,3) NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
+    section INT NOT NULL COMMENT '所在班级',
+    permission TINYINT DEFAULT 2 COMMENT '教务牢师0/教师1/学生2',
+    nation VARCHAR(100) DEFAULT 'China' NOT NULL COMMENT '国籍',
+    ethnic VARCHAR(50) DEFAULT '汉族' NOT NULL COMMENT '民族',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
+    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间'，
+    FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
+```
+
+---
+
+## 学籍表(status)
+
+### 表结构
+
+---
+
+| 字段名     | 数据类型                     | 约束                     | 描述                        |
+|-----------|------------------------------|--------------------------|-----------------------------|
+| **id**    | `INT`                         | 外键，关联 `user` 表     | 对应用户 ID                 |
+| **grade** | `TINYINT NOT NULL`            | 非空                     | 年级                        |
+| **class** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空           | 班级                        |
+| **status** | `ENUM('0', '1', '2', '3') NOT NULL DEFAULT '0'` | 非空，默认 0              | 学籍状态 (`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学) |
+
+---
+
+### 创建指令
+
+```sql
+CREATE TABLE status(
+    id INT NOT NULL,
+    grade TINYINT NOT NULL COMMENT '年级',
+    class TINYINT DEFAULT 0 NOT NULL COMMENT '班级',
+    status ENUM(0,1,2,3) NOT NULl DEFAULT 0 COMMENT '0在读/1休学/2降转/3退学',
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+)
+```
+
+## 课程表(class)
+
+### 表结构
+
+---
+
+| 字段名        | 数据类型                                         | 约束                                        | 描述               |
+|--------------|------------------------------------------------|--------------------------------------------|------------------|
+| **id**       | `INT AUTO_INCREMENT PRIMARY KEY`               | 主键，自动递增                             | 课程唯一ID        |
+| **name**     | `VARCHAR(100) NOT NULL`                        | 非空                                      | 课程名称         |
+| **category** | `VARCHAR(100)`                                 | 可为空                                    | 课程类别（如体育小项） |
+| **point**    | `TINYINT NOT NULL`                             | 非空                                      | 学分            |
+| **teacher_id** | `INT NOT NULL`                                | 非空，外键，关联 `user` 表                 | 教师ID          |
+| **classroom** | `VARCHAR(50)`                                 | 可为空                                    | 上课教室         |
+| **week_start** | `TINYINT DEFAULT 1 NOT NULL`                 | 默认值 1，非空                             | 起始周          |
+| **week_end** | `TINYINT DEFAULT 17 NOT NULL`                  | 默认值 17，非空                            | 结束周          |
+| **period**   | `TINYINT NOT NULL`                             | 非空                                      | 课时            |
+| **time**     | `SET('0', '1', ..., '24')`                     | 非空                                      | 上课时间段       |
+| **college**  | `VARCHAR(50)`                                  | 可为空                                    | 开课学院        |
+| **term**     | `VARCHAR(15) NOT NULL`                         | 非空                                      | 开课学期        |
+| **class_num** | `VARCHAR(50) NOT NULL`                        | 非空，外键，关联 `class_num` 表            | 课序号          |
+| **type**     | `ENUM('必修', '限选', '任选') NOT NULL`         | 非空                                      | 课程类型        |
+| **capacity** | `TINYINT NOT NULL`                             | 非空                                      | 课程容量        |
+
+---
+
+### 创建指令
+
+```sql
+CREATE TABLE class(
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '课程唯一ID',
+    name VARCHAR(100) NOT NULL COMMENT '课程名称',
+    category VARCHAR(100) COMMENT '类别，如体育小项'.
+    point TINYINT NOT NULL COMMENT '学分',
+    teacher_id INT NOT NULL COMMENT '教师id',
+    classroom VARCHAR(50) COMMENT '上课教室',
+    week_start TINYINT DEFAULT 1 NOT NULL COMMENT '起始周',
+    week_end TINYINT DEFAULT 17 NOT NULL COMMENT '结束周',
+    period TINYINT NOT NULL COMMENT '课时',
+    time SET('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24') COMMENT '上课时间段',
+    college VARCHAR(50) COMMENT '开课学院',
+    term VARCHAR(15) NOT NULL COMMENT '开课学期',
+    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
+    type ENUM("必修", "限选", "任选") NOT NULL COMMENT '课程类型',
+    capacity TINYINT NOT NULL COMMENT '课容量',
+    FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
+    FOREIGN KEY (teacher_id) REFERENCES user(id) ON DELETE CASCADE
+)
+```
+
+```sql
+CREATE TABLE class_num(
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
+    name VARCHAR(100) NOT NULL COMMENT '课程名称',
+)
+```
+
+## 选课结果表(course_reg)
+
+### 表结构
+
+---
+
+| 字段名        | 数据类型                     | 约束                                        | 描述           |
+|--------------|------------------------------|--------------------------------------------|--------------|
+| **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 选课唯一 ID   |
+| **student_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 学生 ID      |
+| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `class` 表                | 课程 ID      |
+| **class_num** | `VARCHAR(50) NOT NULL`        | 非空，外键，关联 `class_num` 表            | 课序号       |
+
+---
+
+### 创建指令
+
+```sql
+CREATE TABLE course_reg(
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '选课唯一ID',
+    student_id INT NOT NULL COMMENT '学生id',
+    course_id INT NOT NULL COMMENT '课程id',
+    class_num VARCHAR(50) NOT NULL COMMENT '课序号',
+    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES class(id) ON DELETE CASCADE
+)
+```
+
+## 成绩表(grade)
+
+### 表结构
+
+---
+
+| 字段名        | 数据类型                     | 约束                                        | 描述           |
+|--------------|------------------------------|--------------------------------------------|--------------|
+| **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 成绩唯一 ID   |
+| **student_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 学生 ID      |
+| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `class` 表                | 课程 ID      |
+| **grade**    | `TINYINT NOT NULL`             | 非空                                      | 成绩         |
+| **term**     | `VARCHAR(15) NOT NULL`         | 非空                                      | 开课学期     |
+| **rank**     | `TINYINT NOT NULL`             | 非空                                      | 排名         |
+
+---
+
+### 创建指令
+
+```sql
+CREATE TABLE grade(
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '成绩唯一ID',
+    student_id INT NOT NULL COMMENT '学生id',
+    course_id INT NOT NULL COMMENT '课程id',
+    grade TINYINT NOT NULL COMMENT '成绩',
+    term VARCHAR(15) NOT NULL COMMENT '开课学期',
+    rank TINYINT NOT NULL COMMENT '排名',
+    FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
+    FOREIGN KEY (course_id) REFERENCES class(id) ON DELETE CASCADE
+)
+```
+
+## 班级(section)
+
+### 表结构
+
+---
+
+### 创建指令
+
+```sql
+CREATE TABLE section (
+    id INT AUTO_INCREMENT PRIMARY KEY COMMENT '班级唯一ID',
+    major ENUM('0', '1', '2', '3') NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
+    advisor_id INT NOT NULL COMMENT '班主任ID',
+    FOREIGN KEY (advisor_id) REFERENCES user(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
+```
