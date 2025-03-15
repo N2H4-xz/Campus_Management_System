@@ -1,6 +1,8 @@
 package com.orbithy.cms.service;
 
 import com.orbithy.cms.data.vo.Result;
+import com.orbithy.cms.data.vo.Status;
+import com.orbithy.cms.mapper.StatusMapper;
 import com.orbithy.cms.mapper.UserMapper;
 import com.orbithy.cms.utils.BcryptUtils;
 import com.orbithy.cms.utils.ResponseUtil;
@@ -15,9 +17,11 @@ import java.util.Objects;
 public class UserService {
 
     @Autowired
+    private StatusMapper StatusMapper;
+    @Autowired
     private UserMapper userMapper;
     @Autowired
-    private login login;
+    private LoginService loginService;
 
     @Value("${spring.secret}")
     private String secret1;
@@ -26,7 +30,7 @@ public class UserService {
         if (!Objects.equals(secret, secret1)) {
             return ResponseUtil.build(Result.error(401, "Authentication failed"));
         }
-        if (!login.isExisted(SDUId)) {
+        if (!loginService.isExisted(SDUId)) {
             String passwd = BcryptUtils.encrypt(password);
             userMapper.addTeacher(username, passwd, SDUId, permission);
         }
@@ -36,5 +40,16 @@ public class UserService {
     public ResponseEntity<Result> getInfo(String userId) {
         System.out.println(userId);
         return ResponseUtil.build(Result.success(userMapper.getUserInfo(userId), "获取成功"));
+    }
+
+    public ResponseEntity<Result> setUserStatus(String teacherId, String userId, int status) {
+        if (userMapper.getPermission(teacherId) != 0) {
+            return ResponseUtil.build(Result.error(401, "无权限"));
+        }
+        Status status1 = new Status();
+        status1.setId(Integer.valueOf(userId));
+        status1.setStatus(status);
+        StatusMapper.updateById(status1);
+        return ResponseUtil.build(Result.ok());
     }
 }
