@@ -219,7 +219,7 @@ CREATE TABLE grade(
 CREATE TABLE section (
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '班级唯一ID',
     major ENUM('0', '1', '2', '3') NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
-    advisor_id INT NOT NULL COMMENT '班主任ID',
+    advisor_id INT NOT NULL COMMENT '导员ID',
     FOREIGN KEY (advisor_id) REFERENCES user(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='班级表';
 ```
