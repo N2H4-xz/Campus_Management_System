@@ -32,4 +32,9 @@ public class UserService {
         }
         return ResponseUtil.build(Result.ok());
     }
+
+    public ResponseEntity<Result> getInfo(String userId) {
+        System.out.println(userId);
+        return ResponseUtil.build(Result.success(userMapper.getUserInfo(userId), "获取成功"));
+    }
 }
