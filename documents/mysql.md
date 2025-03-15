@@ -43,14 +43,14 @@ CREATE TABLE user (
     phone VARCHAR(11) UNIQUE COMMENT '手机号',
     password CHAR(128) NOT NULL COMMENT '加密后的密码',
     student_id CHAR(20) NOT NULL UNIQUE COMMENT '学号',
-    major ENUM(0,1,2,3) NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
+    major ENUM('0','1','2','3') NOT NULL COMMENT '专业0软工/1树莓/2大数据/3AI',
     section INT NOT NULL COMMENT '所在班级',
     permission TINYINT DEFAULT 2 COMMENT '教务牢师0/教师1/学生2',
     nation VARCHAR(100) DEFAULT 'China' NOT NULL COMMENT '国籍',
     ethnic VARCHAR(50) DEFAULT '汉族' NOT NULL COMMENT '民族',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',
-    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间'，
+    last_login_at TIMESTAMP DEFAULT NULL COMMENT '最后登录时间',
     FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 ```
@@ -79,7 +79,7 @@ CREATE TABLE status(
     id INT NOT NULL,
     grade TINYINT NOT NULL COMMENT '年级',
     section TINYINT DEFAULT 0 NOT NULL COMMENT '班级',
-    status ENUM(0,1,2,3) NOT NULl DEFAULT 0 COMMENT '0在读/1休学/2降转/3退学',
+    status ENUM('0','1','2','3') NOT NULl DEFAULT 0 COMMENT '0在读/1休学/2降转/3退学',
     FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
 )
