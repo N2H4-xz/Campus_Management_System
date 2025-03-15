@@ -67,7 +67,7 @@ CREATE TABLE user (
 |-----------|------------------------------|--------------------------|-----------------------------|
 | **id**    | `INT`                         | 外键，关联 `user` 表     | 对应用户 ID                 |
 | **grade** | `TINYINT NOT NULL`            | 非空                     | 年级                        |
-| **class** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空           | 班级                        |
+| **section** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空，关联班级表     | 班级                        |
 | **status** | `ENUM('0', '1', '2', '3') NOT NULL DEFAULT '0'` | 非空，默认 0              | 学籍状态 (`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学) |
 
 ---
@@ -78,13 +78,14 @@ CREATE TABLE user (
 CREATE TABLE status(
     id INT NOT NULL,
     grade TINYINT NOT NULL COMMENT '年级',
-    class TINYINT DEFAULT 0 NOT NULL COMMENT '班级',
+    section TINYINT DEFAULT 0 NOT NULL COMMENT '班级',
     status ENUM(0,1,2,3) NOT NULl DEFAULT 0 COMMENT '0在读/1休学/2降转/3退学',
-    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
 )
 ```
 
-## 课程表(class)
+## 课程表(classes)
 
 ### 表结构
 
@@ -113,7 +114,7 @@ CREATE TABLE status(
 ### 创建指令
 
 ```sql
-CREATE TABLE class(
+CREATE TABLE classes(
     id INT AUTO_INCREMENT PRIMARY KEY COMMENT '课程唯一ID',
     name VARCHAR(100) NOT NULL COMMENT '课程名称',
     category VARCHAR(100) COMMENT '类别，如体育小项'.
@@ -152,7 +153,7 @@ CREATE TABLE class_num(
 |--------------|------------------------------|--------------------------------------------|--------------|
 | **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 选课唯一 ID   |
 | **student_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 学生 ID      |
-| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `class` 表                | 课程 ID      |
+| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `classes` 表                | 课程 ID      |
 | **class_num** | `VARCHAR(50) NOT NULL`        | 非空，外键，关联 `class_num` 表            | 课序号       |
 
 ---
@@ -167,7 +168,7 @@ CREATE TABLE course_reg(
     class_num VARCHAR(50) NOT NULL COMMENT '课序号',
     FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES class(id) ON DELETE CASCADE
+    FOREIGN KEY (course_id) REFERENCES classes(id) ON DELETE CASCADE
 )
 ```
 
@@ -181,7 +182,7 @@ CREATE TABLE course_reg(
 |--------------|------------------------------|--------------------------------------------|--------------|
 | **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 成绩唯一 ID   |
 | **student_id** | `INT NOT NULL`                | 非空，外键，关联 `user` 表                 | 学生 ID      |
-| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `class` 表                | 课程 ID      |
+| **course_id** | `INT NOT NULL`                | 非空，外键，关联 `classes` 表                | 课程 ID      |
 | **grade**    | `TINYINT NOT NULL`             | 非空                                      | 成绩         |
 | **term**     | `VARCHAR(15) NOT NULL`         | 非空                                      | 开课学期     |
 | **rank**     | `TINYINT NOT NULL`             | 非空                                      | 排名         |
@@ -199,7 +200,7 @@ CREATE TABLE grade(
     term VARCHAR(15) NOT NULL COMMENT '开课学期',
     rank TINYINT NOT NULL COMMENT '排名',
     FOREIGN KEY (student_id) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (course_id) REFERENCES class(id) ON DELETE CASCADE
+    FOREIGN KEY (course_id) REFERENCES classes(id) ON DELETE CASCADE
 )
 ```
 
