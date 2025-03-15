@@ -31,7 +31,7 @@ public class statusController {
      */
     @Auth
     @PostMapping("/set")
-    public ResponseEntity<Result> setStatus(String userId, int status) {
+    public ResponseEntity<Result> setStatus(String userId, String status) {
         String teacherId = (String) request.getAttribute("userId");
         return userService.setUserStatus(teacherId, userId, status);
     }

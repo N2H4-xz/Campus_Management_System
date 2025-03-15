@@ -1,7 +1,7 @@
 package com.orbithy.cms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.orbithy.cms.data.vo.User;
+import com.orbithy.cms.data.po.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -21,7 +21,7 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Insert("INSERT INTO user (username, password, student_id, major) VALUES (#{username}, #{password}, #{SDUId}, '0')")
     @Options(useGeneratedKeys = true, keyProperty = "id")
-    int addUser(User user);
+    void addUser(User user);
 
     @Insert("insert into user (username, password, student_id, permission) values (#{username}, #{password}, #{SDUId}, #{permission})")
     void addTeacher(String username, String password, String SDUId, int permission);

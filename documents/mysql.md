@@ -67,7 +67,7 @@ CREATE TABLE user (
 | **id**    | `INT`                         | 外键，关联 `user` 表     | 对应用户 ID                 |
 | **grade** | `TINYINT NOT NULL`            | 非空                     | 年级                        |
 | **section** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空，关联班级表     | 班级                        |
-| **status** | `ENUM('0', '1', '2', '3') NOT NULL DEFAULT '0'` | 非空，默认 0              | 学籍状态 (`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学) |
+| **status** | `TINYINT NOT NULL DEFAULT 0` | 非空，默认0'             | 学籍状态 (`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学) |
 
 ---
 
@@ -78,7 +78,7 @@ CREATE TABLE status(
     id INT NOT NULL,
     grade TINYINT NOT NULL COMMENT '年级',
     section INT DEFAULT 0 NOT NULL COMMENT '班级',
-    status ENUM('0','1','2','3') NOT NULl DEFAULT '0' COMMENT '0在读/1休学/2降转/3退学',
+    status TINYINT NOT NULl DEFAULT 0 COMMENT '学生状态(`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学)',
     FOREIGN KEY (id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学籍表';

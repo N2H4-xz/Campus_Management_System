@@ -1,7 +1,8 @@
 package com.orbithy.cms.service;
 
+import com.orbithy.cms.data.po.StudentStatus;
 import com.orbithy.cms.data.vo.Result;
-import com.orbithy.cms.data.vo.Status;
+import com.orbithy.cms.data.po.Status;
 import com.orbithy.cms.mapper.StatusMapper;
 import com.orbithy.cms.mapper.UserMapper;
 import com.orbithy.cms.utils.BcryptUtils;
@@ -42,13 +43,13 @@ public class UserService {
         return ResponseUtil.build(Result.success(userMapper.getUserInfo(userId), "获取成功"));
     }
 
-    public ResponseEntity<Result> setUserStatus(String teacherId, String userId, int status) {
+    public ResponseEntity<Result> setUserStatus(String teacherId, String userId, String status) {
         if (userMapper.getPermission(teacherId) != 0) {
             return ResponseUtil.build(Result.error(401, "无权限"));
         }
         Status status1 = new Status();
         status1.setId(Integer.valueOf(userId));
-        status1.setStatus(status);
+        status1.setStatus(StudentStatus.fromDescription(status));
         StatusMapper.updateById(status1);
         return ResponseUtil.build(Result.ok());
     }
