@@ -1,5 +1,6 @@
 package com.orbithy.cms.service;
 
+import com.orbithy.cms.cache.IGlobalCache;
 import com.orbithy.cms.data.po.StudentStatus;
 import com.orbithy.cms.data.vo.Result;
 import com.orbithy.cms.data.po.Status;
@@ -23,6 +24,8 @@ public class UserService {
     private UserMapper userMapper;
     @Autowired
     private LoginService loginService;
+    @Autowired
+    private IGlobalCache redis;
 
     @Value("${spring.secret}")
     private String secret1;
@@ -52,5 +55,20 @@ public class UserService {
         status1.setStatus(StudentStatus.fromDescription(status));
         StatusMapper.updateById(status1);
         return ResponseUtil.build(Result.ok());
+    }
+
+    /**
+     * 用户登出
+     *
+     * @param token 用户token
+     * @return 登出结果
+     */
+    public ResponseEntity<Result> logout(String token) {
+        try {
+            redis.del(token);
+            return ResponseUtil.build(Result.success(null, "登出成功"));
+        } catch (Exception e) {
+            return ResponseUtil.build(Result.error(400, "登出失败" + e));
+        }
     }
 }

@@ -4,6 +4,7 @@ package com.orbithy.cms.controller;
 import com.orbithy.cms.annotation.Auth;
 import com.orbithy.cms.data.vo.Result;
 import com.orbithy.cms.service.UserService;
+import com.orbithy.cms.utils.ResponseUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/user")
@@ -44,5 +49,23 @@ public class UserController {
     public ResponseEntity<Result> getInfo() {
         String userId = (String) request.getAttribute("userId");
         return userService.getInfo(userId);
+    }
+
+    /**
+     * 用户登出
+     * @return 登出结果
+     */
+    @Auth
+    @PostMapping("/logout")
+    public ResponseEntity<Result> logout() {
+        HttpServletRequest request = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
+        String authorizationHeader = request.getHeader("Authorization");
+        String token;
+        if (authorizationHeader.startsWith("Bearer ")) {
+            token = authorizationHeader.substring(7);
+        } else {
+            return ResponseUtil.build(Result.error(401, "token格式错误"));
+        }
+        return userService.logout(token);
     }
 }
