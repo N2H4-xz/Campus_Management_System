@@ -108,9 +108,10 @@ CREATE TABLE status(
 | **time**     | `SET('0', '1', ..., '24')`                     | 非空                                      | 上课时间段       |
 | **college**  | `VARCHAR(50)`                                  | 可为空                                    | 开课学院        |
 | **term**     | `VARCHAR(15) NOT NULL`                         | 非空                                      | 开课学期        |
-| **class_num** | `VARCHAR(50) NOT NULL`                        | 非空，外键，关联 `class_num` 表            | 课序号          |
+| **class_num** | `VARCHAR(50) NOT NULL`                        | 无特殊约束            | 课序号          |
 | **type**     | `ENUM('必修', '限选', '任选') NOT NULL`         | 非空                                      | 课程类型        |
 | **capacity** | `TINYINT NOT NULL`                             | 非空                                      | 课程容量        |
+| **status** | `TINYINT` | 非空，默认为0 | 课程状态（0申请、1审批通过、2拒绝、3已结课） |
 
 ---
 
@@ -133,17 +134,9 @@ CREATE TABLE classes(
     class_num VARCHAR(50) UNIQUE NOT NULL COMMENT '课序号',
     type ENUM('必修', '限选', '任选') NOT NULL COMMENT '课程类型',
     capacity TINYINT NOT NULL COMMENT '课容量',
-    FOREIGN KEY (class_num) REFERENCES class_num(class_num) ON DELETE CASCADE,
+    status TINYINT DEFAULT 0  NOT NULL COMMENT '课程状态',
     FOREIGN KEY (teacher_id) REFERENCES user(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课程表';
-```
-
-```sql
-CREATE TABLE class_num(
-    id INT AUTO_INCREMENT PRIMARY KEY, 
-    class_num VARCHAR(50) UNIQUE NOT NULL COMMENT '课序号',
-    name VARCHAR(100) NOT NULL COMMENT '课程名称'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='课序号表';
 ```
 
 ## 选课结果表(course_reg)
