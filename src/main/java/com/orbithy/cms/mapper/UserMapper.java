@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
@@ -23,4 +25,9 @@ public interface UserMapper extends BaseMapper<User> {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void addUser(User user);
 
+    @Update("UPDATE user SET phone = #{phone} WHERE id = #{userId}")
+    void updatePhone(@Param("userId") String userId, @Param("phone") String phone);
+
+    @Update("UPDATE user SET email = #{email} WHERE id = #{userId}")
+    void updateEmail(@Param("userId") String userId, @Param("email") String email);
 }
