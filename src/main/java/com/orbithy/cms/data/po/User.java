@@ -1,6 +1,7 @@
 package com.orbithy.cms.data.po;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Getter;
@@ -21,7 +22,8 @@ public class User {
     private String email;
     private String phone;
     private String password;
-    private String studentId;
+    @TableField("student_id")
+    private String SDUId;
     private Integer major;
     private Integer section;
     private Byte permission;
