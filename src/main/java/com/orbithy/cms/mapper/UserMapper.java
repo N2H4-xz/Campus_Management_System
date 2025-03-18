@@ -20,6 +20,8 @@ public interface UserMapper extends BaseMapper<User> {
     int getPermission(String id);
     @Select("select password from user where student_id=#{SDUId}")
     String getPassword(String SDUId);
+    @Select("select permission from user where id=#{id}")
+    int getPermissionById(String id);
 
     @Insert("INSERT INTO user (username, password, student_id, major) VALUES (#{username}, #{password}, #{SDUId}, '0')")
     @Options(useGeneratedKeys = true, keyProperty = "id")
