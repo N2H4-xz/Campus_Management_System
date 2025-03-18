@@ -6,6 +6,8 @@ import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
@@ -25,4 +27,10 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Insert("insert into user (username, password, student_id, permission) values (#{username}, #{password}, #{SDUId}, #{permission})")
     void addTeacher(String username, String password, String SDUId, int permission);
+
+    @Update("UPDATE user SET phone = #{phone} WHERE id = #{userId}")
+    void updatePhone(@Param("userId") String userId, @Param("phone") String phone);
+
+    @Update("UPDATE user SET email = #{email} WHERE id = #{userId}")
+    void updateEmail(@Param("userId") String userId, @Param("email") String email);
 }

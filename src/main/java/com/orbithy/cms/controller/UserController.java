@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -67,5 +68,31 @@ public class UserController {
             return ResponseUtil.build(Result.error(401, "token格式错误"));
         }
         return userService.logout(token);
+    }
+
+    /**
+     * 更新用户手机号
+     *
+     * @param phone 新手机号
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @PostMapping("/updatePhone")
+    public ResponseEntity<Result> updatePhone(@RequestParam String phone) {
+        String userId = (String) request.getAttribute("userId");
+        return userService.updatePhone(userId, phone);
+    }
+
+    /**
+     * 更新用户邮箱
+     *
+     * @param email 新邮箱
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @PostMapping("/updateEmail")
+    public ResponseEntity<Result> updateEmail(@RequestParam String email) {
+        String userId = (String) request.getAttribute("userId");
+        return userService.updateEmail(userId, email);
     }
 }
