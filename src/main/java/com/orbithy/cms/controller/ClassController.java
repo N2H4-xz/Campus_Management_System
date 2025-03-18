@@ -1,4 +1,103 @@
 package com.orbithy.cms.controller;
 
+import com.orbithy.cms.annotation.Auth;
+import com.orbithy.cms.data.dto.CreateCourseDTO;
+import com.orbithy.cms.data.vo.Result;
+import com.orbithy.cms.service.ClassService;
+import com.orbithy.cms.utils.ResponseUtil;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/class")
 public class ClassController {
+    @Resource
+    private ClassService classService;
+    @Autowired
+    private HttpServletRequest request;
+
+    /**
+     * 教师创建课程
+     *
+     * @param courseDTO 课程信息
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @PostMapping("/create")
+    public ResponseEntity<Result> createCourse(@RequestBody CreateCourseDTO courseDTO) {
+        String userId = (String) request.getAttribute("userId");
+        return classService.createCourse(userId, courseDTO);
+    }
+
+    /**
+     * 教务审批课程
+     *
+     * @param courseId 课程ID
+     * @param status 审批状态（1通过，2拒绝）
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @PostMapping("/approve/{courseId}")
+    public ResponseEntity<Result> approveCourse(
+            @PathVariable Integer courseId,
+            @RequestParam Integer status) {
+        String userId = (String) request.getAttribute("userId");
+        return classService.approveCourse(userId, courseId, status);
+    }
+
+    /**
+     * 获取课程列表
+     *
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @GetMapping("/list")
+    public ResponseEntity<Result> getCourseList() {
+        String userId = (String) request.getAttribute("userId");
+        return classService.getCourseList(userId);
+    }
+
+    /**
+     * 获取课程详情
+     *
+     * @param courseId 课程ID
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @GetMapping("/detail/{courseId}")
+    public ResponseEntity<Result> getCourseDetail(@PathVariable Integer courseId) {
+        return classService.getCourseDetail(courseId);
+    }
+
+    /**
+     * 教师修改课程信息
+     *
+     * @param courseId 课程ID
+     * @param courseDTO 课程信息
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @PostMapping("/update/{courseId}")
+    public ResponseEntity<Result> updateCourse(
+            @PathVariable Integer courseId,
+            @RequestBody CreateCourseDTO courseDTO) {
+        String userId = (String) request.getAttribute("userId");
+        return classService.updateCourse(userId, courseId, courseDTO);
+    }
+
+    /**
+     * 教师删除课程
+     *
+     * @param courseId 课程ID
+     * @return ResponseEntity<Result>
+     */
+    @Auth
+    @PostMapping("/delete/{courseId}")
+    public ResponseEntity<Result> deleteCourse(@PathVariable Integer courseId) {
+        String userId = (String) request.getAttribute("userId");
+        return classService.deleteCourse(userId, courseId);
+    }
 }
