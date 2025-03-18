@@ -22,11 +22,23 @@ public class SectionController {
     /**
      * 添加班级
      *
+     * @param section 班级信息
      * @return ResponseEntity<Result>
      */
     @PostMapping("/addSection")
     @Admin
     public ResponseEntity<Result> addSection(Section section) {
         return sectionService.addSection(section);
+    }
+
+    /**
+     * 分配人员
+     *
+     * @return ResponseEntity<Result>
+     */
+    @PostMapping("/assign")
+    @Admin
+    public ResponseEntity<Result> assign(String grade) {
+        return sectionService.assign(grade);
     }
 }

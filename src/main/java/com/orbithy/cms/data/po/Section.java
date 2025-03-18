@@ -16,8 +16,11 @@ public class Section {
 
     private Major major; // 专业
     private Integer advisorId; // 导员ID（外键）
+    private String grade;
+    private String number; // 班级编号
 
     // 专业枚举类型
+    @Getter
     public enum Major {
         SOFTWARE_ENGINEERING("0"),
         RASPBERRY("1"),
@@ -31,9 +34,6 @@ public class Section {
             this.value = value;
         }
 
-        public String getValue() {
-            return this.value;
-        }
     }
 }
 
