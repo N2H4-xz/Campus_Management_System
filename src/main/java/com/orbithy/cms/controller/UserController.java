@@ -5,7 +5,6 @@ import com.orbithy.cms.annotation.Auth;
 import com.orbithy.cms.data.vo.Result;
 import com.orbithy.cms.service.UserService;
 import com.orbithy.cms.utils.ResponseUtil;
-import com.orbithy.cms.data.po.User;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,13 +29,16 @@ public class UserController {
     /**
      * 添加教师
      *
-     * @param user      用户信息
+     * @param SDUId     教师工号
+     * @param password  密码
+     * @param username  用户名
+     * @param permission 权限
      * @param secret    密钥
      * @return ResponseEntity<Result>
      */
     @PostMapping("/addTeacher")
-    public ResponseEntity<Result> addTeacher(User user, String secret) {
-        return userService.addTeacher(user, secret);
+    public ResponseEntity<Result> addTeacher(String SDUId, String password, String username, int permission, String secret) {
+        return userService.addTeacher(SDUId, password, username, permission, secret);
     }
 
     /**

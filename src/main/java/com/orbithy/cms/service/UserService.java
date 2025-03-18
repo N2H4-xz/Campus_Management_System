@@ -2,7 +2,6 @@ package com.orbithy.cms.service;
 
 import com.orbithy.cms.cache.IGlobalCache;
 import com.orbithy.cms.data.po.StudentStatus;
-import com.orbithy.cms.data.po.User;
 import com.orbithy.cms.data.vo.Result;
 import com.orbithy.cms.data.po.Status;
 import com.orbithy.cms.mapper.StatusMapper;
@@ -31,16 +30,13 @@ public class UserService {
     @Value("${spring.secret}")
     private String secret1;
 
-    public ResponseEntity<Result> addTeacher(User user, String secret) {
+    public ResponseEntity<Result> addTeacher(String SDUId, String password, String username, int permission, String secret) {
         if (!Objects.equals(secret, secret1)) {
             return ResponseUtil.build(Result.error(401, "Authentication failed"));
         }
-        String SDUId = user.getSDUId();
-        String password = user.getPassword();
         if (!loginService.isExisted(SDUId)) {
             String passwd = BcryptUtils.encrypt(password);
-            user.setPassword(passwd);
-            userMapper.insert(user);
+            userMapper.addTeacher(username, passwd, SDUId, permission);
         }
         return ResponseUtil.build(Result.ok());
     }

@@ -25,6 +25,9 @@ public interface UserMapper extends BaseMapper<User> {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void addUser(User user);
 
+    @Insert("insert into user (username, password, student_id, permission) values (#{username}, #{password}, #{SDUId}, #{permission})")
+    void addTeacher(String username, String password, String SDUId, int permission);
+
     @Update("UPDATE user SET phone = #{phone} WHERE id = #{userId}")
     void updatePhone(@Param("userId") String userId, @Param("phone") String phone);
 
