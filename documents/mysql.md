@@ -68,6 +68,8 @@ CREATE TABLE user (
 | **grade** | `TINYINT NOT NULL`            | 非空                     | 年级                        |
 | **section** | `TINYINT DEFAULT 0 NOT NULL`  | 默认值 0，非空，关联班级表     | 班级                        |
 | **status** | `TINYINT NOT NULL DEFAULT 0` | 非空，默认0'             | 学籍状态 (`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学) |
+| **admission** | `DATE`  | 非空     | 入学时间                        |
+| **graduation** | `DATE` | 非空             | 毕业时间                |
 
 ---
 
@@ -79,6 +81,8 @@ CREATE TABLE status(
     grade TINYINT NOT NULL COMMENT '年级',
     section INT DEFAULT 0 NOT NULL COMMENT '班级',
     status TINYINT NOT NULl DEFAULT 0 COMMENT '学生状态(`0` 在读 / `1` 休学 / `2` 降转 / `3` 退学)',
+    admission DATE NOT NULL COMMENT '入学时间',
+    graduation DATE NOT NULL COMMENT '毕业时间',
     FOREIGN KEY (id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (section) REFERENCES section(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='学籍表';
@@ -211,7 +215,7 @@ CREATE TABLE grade(
 |--------------|------------------------------|--------------------------------------------|-------------------|
 | **id**       | `INT AUTO_INCREMENT PRIMARY KEY` | 主键，自动递增                             | 班级唯一 ID       |
 | **major**    | `ENUM('0', '1', '2', '3') NOT NULL` | 非空                                | 专业 (`0` 软工 / `1` 树莓 / `2` 大数据 / `3` AI) |
-| **advisor_id** | `INT NOT NULL`                | 外键，关联 `user` 表                 | 班主任 ID         |
+| **advisor_id** | `INT`                | 外键，关联 `user` 表                 | 班主任 ID         |
 
 ---
 
