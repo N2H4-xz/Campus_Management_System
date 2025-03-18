@@ -32,10 +32,11 @@ public class SectionService {
             return ResponseUtil.build(Result.error(400, "班级不存在"));
         }
         List<Status> statusList = statusMapper.getStatusList(grade);
+        List<Integer> sectionList = sectionMapper.getSectionList(grade);
         int index = 0;
         for (Status status : statusList) {
-            int assignedSection = (index % classCount) + 1; // 轮流分配
-            statusMapper.updateStudentSection(status.getId(), assignedSection);
+            int cls = sectionList.get(index % classCount);
+            statusMapper.updateStudentSection(status.getId(), cls);
             index++;
         }
         return ResponseUtil.build(Result.ok());
