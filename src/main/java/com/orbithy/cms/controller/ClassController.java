@@ -48,56 +48,56 @@ public class ClassController {
         return classService.approveCourse(userId, courseId, status);
     }
 
-    /**
-     * 获取课程列表
-     *
-     * @return ResponseEntity<Result>
-     */
-    @Auth
-    @GetMapping("/list")
-    public ResponseEntity<Result> getCourseList() {
-        String userId = (String) request.getAttribute("userId");
-        return classService.getCourseList(userId);
-    }
-
-    /**
-     * 获取课程详情
-     *
-     * @param courseId 课程ID
-     * @return ResponseEntity<Result>
-     */
-    @Auth
-    @GetMapping("/detail/{courseId}")
-    public ResponseEntity<Result> getCourseDetail(@PathVariable Integer courseId) {
-        return classService.getCourseDetail(courseId);
-    }
-
-    /**
-     * 教师修改课程信息
-     *
-     * @param courseId 课程ID
-     * @param courseDTO 课程信息
-     * @return ResponseEntity<Result>
-     */
-    @Auth
-    @PostMapping("/update/{courseId}")
-    public ResponseEntity<Result> updateCourse(
-            @PathVariable Integer courseId,
-            @RequestBody CreateCourseDTO courseDTO) {
-        String userId = (String) request.getAttribute("userId");
-        return classService.updateCourse(userId, courseId, courseDTO);
-    }
-
-    /**
-     * 教师删除课程
-     *
-     * @param courseId 课程ID
-     * @return ResponseEntity<Result>
-     */
-    @Auth
-    @PostMapping("/delete/{courseId}")
-    public ResponseEntity<Result> deleteCourse(@PathVariable Integer courseId) {
-        String userId = (String) request.getAttribute("userId");
-        return classService.deleteCourse(userId, courseId);
-    }
+//    /**
+//     * 获取课程列表
+//     *
+//     * @return ResponseEntity<Result>
+//     */
+//    @Auth
+//    @GetMapping("/list")
+//    public ResponseEntity<Result> getCourseList() {
+//        String userId = (String) request.getAttribute("userId");
+//        return classService.getCourseList(userId);
+//    }
+//
+//    /**
+//     * 获取课程详情
+//     *
+//     * @param courseId 课程ID
+//     * @return ResponseEntity<Result>
+//     */
+//    @Auth
+//    @GetMapping("/detail/{courseId}")
+//    public ResponseEntity<Result> getCourseDetail(@PathVariable Integer courseId) {
+//        return classService.getCourseDetail(courseId);
+//    }
+//
+//    /**
+//     * 教师修改课程信息
+//     *
+//     * @param courseId 课程ID
+//     * @param courseDTO 课程信息
+//     * @return ResponseEntity<Result>
+//     */
+//    @Auth
+//    @PostMapping("/update/{courseId}")
+//    public ResponseEntity<Result> updateCourse(
+//            @PathVariable Integer courseId,
+//            @RequestBody CreateCourseDTO courseDTO) {
+//        String userId = (String) request.getAttribute("userId");
+//        return classService.updateCourse(userId, courseId, courseDTO);
+//    }
+//
+//    /**
+//     * 教师删除课程
+//     *
+//     * @param courseId 课程ID
+//     * @return ResponseEntity<Result>
+//     */
+//    @Auth
+//    @PostMapping("/delete/{courseId}")
+//    public ResponseEntity<Result> deleteCourse(@PathVariable Integer courseId) {
+//        String userId = (String) request.getAttribute("userId");
+//        return classService.deleteCourse(userId, courseId);
+//    }
 }

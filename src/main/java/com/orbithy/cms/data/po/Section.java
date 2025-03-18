@@ -22,9 +22,9 @@ public class Section {
     // 专业枚举类型
     @Getter
     public enum Major {
-        SOFTWARE_ENGINEERING("0"),
-        RASPBERRY("1"),
-        BIG_DATA("2"),
+        软件工程("0"),
+        数字媒体技术("1"),
+        大数据("2"),
         AI("3");
 
         @EnumValue // 让 MyBatis-Plus 识别该字段的数据库存储值

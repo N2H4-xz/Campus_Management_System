@@ -14,5 +14,12 @@ public interface SectionMapper extends BaseMapper<Section> {
     int getSectionCount(String grade);
 
     @Select("select id from section where grade=#{grade}")
-    List<Integer> getSectionList(String grade);
+    List<Integer> getSectionIdList(String grade);
+
+    @Select("SELECT * FROM section WHERE grade = #{grade} LIMIT #{size} OFFSET #{offset}")
+    List<Section> getSectionList(String grade, int offset, int size);
+
+    @Select("SELECT * FROM section LIMIT #{size} OFFSET #{offset}")
+    List<Section> getSectionListAll(int offset, int size);
+
 }
