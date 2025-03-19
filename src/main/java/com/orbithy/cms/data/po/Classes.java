@@ -19,18 +19,18 @@ public class Classes {
 
     private String name;
     private String category;
-    private Byte point;
+    private Integer point;
     private Integer teacherId;
     private String classroom;
-    private Byte weekStart;
-    private Byte weekEnd;
-    private Byte period;
+    private Integer weekStart;
+    private Integer weekEnd;
+    private Integer period;
     private String time;
     private String college;
     private String term;
     private String classNum;
     private CourseType type;
-    private Byte capacity;
+    private Integer capacity;
     private CourseStatus status;
 
     @TableField(fill = FieldFill.INSERT)
